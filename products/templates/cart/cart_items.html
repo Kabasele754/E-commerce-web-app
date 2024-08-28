@@ -1,0 +1,10 @@
+{% for item in cart_items %}
+<li>
+    <a href="#" class="image"><img src="{{ item.product.get_first_image.url }}" class="cart-thumb" alt=""></a>
+    <div class="cart-item-desc">
+        <h6><a href="#">{{ item.product.name }}</a></h6>
+        <p>{{ item.quantity }}x - <span class="price">${{ item.product.price }}</span></p>
+    </div>
+    <span class="dropdown-product-remove" data-product-id="{{ item.product.id }}"><i class="icon-cross"></i></span>
+</li>
+{% endfor %}

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <!-- Title  -->
+    <title>Karl - Fashion Ecommerce Template | Home</title>
+
+    <!-- Favicon  -->
+    <link rel="icon" href="img/core-img/favicon.ico">
+
+    <!-- Core Style CSS -->
+    <link rel="stylesheet" href="{% static 'css/core-style.css' %}">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+
+    <!-- Responsive CSS -->
+    <link href="{% static 'css/responsive.css' %}" rel="stylesheet">
+    <style>
+        .logo {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: red;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+
+    </style>
+
+</head>
+
+<body>
+
+<!--    category-->
+    {% include 'partials/category.html' %}
+
+
+    <div id="wrapper">
+
+        <!-- ****** Header Area Start ****** -->
+        {% include 'partials/header.html' %}
+
+        <!-- ****** Header Area End ****** -->
+
+        {% block content %}
+        {% endblock content %}
+
+        <!-- ****** Footer Area Start ****** -->
+        {% include 'partials/footer.html' %}
+        <!-- ****** Footer Area End ****** -->
+    </div>
+    <!-- /.wrapper end -->
+
+    <!-- jQuery (Necessary for All JavaScript Plugins) -->
+    <script src="{% static 'js/jquery/jquery-2.2.4.min.js' %}"></script>
+    <!-- Popper js -->
+    <script src="{% static 'js/popper.min.js ' %}"></script>
+    <!-- Bootstrap js -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- Plugins js -->
+    <script src="{% static 'js/plugins.js' %}"></script>
+    <!-- Active js -->
+    <script src="{% static 'js/active.js' %}"></script>
+
+
+<script>
+    $(document).on('click', '.add-to-cart-btn', function(e) {
+    e.preventDefault();
+    let productId = $(this).data('product-id');
+    let quantity = $('#quantity').val(); // Si vous avez un champ pour la quantité.
+
+    $.ajax({
+        url: "{% url 'add_to_cart' %}",
+        method: "POST",
+        data: {
+            'product_id': productId,
+            'quantity': quantity,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(data) {
+            updateCartHeader();
+        }
+    });
+});
+
+function updateCartHeader() {
+    $.ajax({
+        url: "{% url 'header_cart_data' %}",
+        method: "GET",
+        success: function(data) {
+            $('.cart_quantity').text(data.cart_count);
+            $('#header-cart-btn').html(`<span class="cart_quantity">${data.cart_count}</span> <i class="ti-bag"></i> Your Bag $${data.total_price}`);
+            $('.cart-list').html(data.cart_items_html);
+        }
+    });
+}
+
+</script>
+
+
+<!-- Incluez jQuery si ce n'est pas déjà fait -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Fonction pour gérer l'ajout au panier via AJAX
+    $('form.cart').on('submit', function(event) {
+        event.preventDefault();  // Empêche le formulaire de se soumettre normalement
+
+        var $form = $(this);
+        var data = $form.serialize();  // Sérialise les données du formulaire
+
+        $.ajax({
+            url: "{% url 'add_to_cart_ajax' %}",  // L'URL de la vue AJAX
+            type: "POST",
+            data: data,
+            success: function(response) {
+                if (response.success) {
+                    alert(response.message);  // Affiche le message de succès
+                    // Vous pouvez mettre à jour l'interface utilisateur ici
+                    updateCartHeader();
+                } else {
+                    alert('Erreur: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('Une erreur est survenue.');
+            }
+        });
+    });
+});
+
+
+
+function updateCartHeader() {
+    $.ajax({
+        url: "{% url 'header_cart_data' %}",
+        method: "GET",
+        success: function(data) {
+            $('.cart_quantity').text(data.cart_count);
+            $('#header-cart-btn').html(`<span class="cart_quantity">${data.cart_count}</span> <i class="ti-bag"></i> Your Bag $${data.total_price}`);
+            $('.cart-list').html(data.cart_items_html);
+        }
+    });
+}
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,164 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- ****** Zone du Panier Début ****** -->
+<div class="cart_area section_padding_100 clearfix">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="cart-table clearfix">
+                    <table class="table table-responsive">
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Prix</th>
+                                <th>Quantité</th>
+                                <th>Total</th>
+                                <th>Supprimer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            <tr>
+                                <td class="cart_product_img d-flex align-items-center">
+
+                                     {% with item.product.get_first_image as first_image %}
+                                        {% if first_image %}
+
+                                    <a href="#"><img src="{{ first_image.image.url }}" alt="{{ product.name }}"></a>
+                                        {% else %}
+                                            <img src="{% static 'img/default-product.png' %}" alt="Aucune Image Disponible">
+                                        {% endif %}
+                                    {% endwith %}
+                                    <h6>{{ item.product.name }}</h6>
+                                </td>
+                                <td class="price"><span>${{ item.product.price }}</span></td>
+                                <td class="qty">
+                                    <div class="quantity">
+                                        <span class="qty-minus" onclick="updateQuantity('{{ item.id }}', -1)"><i class="fa fa-minus" aria-hidden="true"></i></span>
+                                        <input type="number" class="qty-text" id="qty_{{ item.id }}" step="1" min="1" name="quantity" value="{{ item.quantity }}" readonly>
+                                        <span class="qty-plus" onclick="updateQuantity('{{ item.id }}', 1)"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                    </div>
+                                </td>
+                                <td class="total_price"><span>${{ item.total_price }}</span></td>
+                                <td class="remove">
+                                    <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger btn-sm">Supprimer</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">Votre panier est vide</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="cart-footer d-flex mt-30">
+                    <div class="back-to-shop w-50">
+                        <a href="{% url 'shop' %}">Continuer vos achats</a>
+                    </div>
+                    <div class="update-checkout w-50 text-right">
+                        <a href="{% url 'clear_cart' %}">Vider le panier</a>
+                        <a href="#" onclick="updateCart()">Mettre à jour le panier</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="coupon-code-area mt-70">
+                    <div class="cart-page-heading">
+                        <h5>Code Promo</h5>
+                        <p>Entrez votre code promo</p>
+                    </div>
+                    <form action="{% url 'apply_coupon' %}" method="post">
+                        {% csrf_token %}
+                        <input type="text" name="coupon_code" placeholder="Entrez le code promo">
+                        <button type="submit">Appliquer</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="shipping-method-area mt-70">
+                    <div class="cart-page-heading">
+                        <h5>Méthode de Livraison</h5>
+                        <p>Choisissez celle que vous souhaitez</p>
+                    </div>
+                    <div class="custom-control custom-radio mb-30">
+                        <input type="radio" id="customRadio1" name="shipping_method" class="custom-control-input">
+                        <label class="custom-control-label d-flex align-items-center justify-content-between" for="customRadio1"><span>Livraison le lendemain</span><span>$4.99</span></label>
+                    </div>
+                    <div class="custom-control custom-radio mb-30">
+                        <input type="radio" id="customRadio2" name="shipping_method" class="custom-control-input">
+                        <label class="custom-control-label d-flex align-items-center justify-content-between" for="customRadio2"><span>Livraison standard</span><span>$1.99</span></label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" id="customRadio3" name="shipping_method" class="custom-control-input">
+                        <label class="custom-control-label d-flex align-items-center justify-content-between" for="customRadio3"><span>Retrait en magasin</span><span>Gratuit</span></label>
+                    </div>
+                </div>
+            </div>
+           <div class="col-12 col-lg-4">
+    <div class="cart-total-area mt-70">
+        <div class="cart-page-heading">
+            <h5>Total du Panier</h5>
+            <p>Informations finales</p>
+        </div>
+        <ul class="cart-total-chart">
+            <li><span>Sous-total</span> <span id="cart-subtotal">${{ subtotal }}</span></li>
+            <li><span>Expédition</span> <span id="cart-shipping">${{ shipping }}</span></li>
+            <li><span><strong>Total</strong></span> <span id="cart-total"><strong>${{ total }}</strong></span></li>
+        </ul>
+        <a href="{% url 'checkout' %}" class="btn karl-checkout-btn">Passer à la caisse</a>
+    </div>
+</div>
+
+        </div>
+    </div>
+</div>
+<!-- ****** Zone du Panier Fin ****** -->
+
+<script>
+    function updateQuantity(itemId, change) {
+        var qtyInput = document.getElementById('qty_' + itemId);
+        var currentQty = parseInt(qtyInput.value);
+        if (!isNaN(currentQty) && currentQty > 1 && change < 0) {
+            qtyInput.value = currentQty + change;
+        } else if (!isNaN(currentQty) && change > 0) {
+            qtyInput.value = currentQty + change;
+        }
+        updateCart();
+    }
+
+    function updateCart() {
+        var subtotal = 0;
+        var shipping = parseFloat(document.getElementById('cart-shipping').innerText.replace('$', ''));
+
+        // Loop through all cart items
+        document.querySelectorAll('.cart-table tbody tr').forEach(function(row) {
+            var price = parseFloat(row.querySelector('.price span').innerText.replace('$', ''));
+            var qty = parseInt(row.querySelector('.qty-text').value);
+            var total = price * qty;
+            row.querySelector('.total_price span').innerText = '$' + total.toFixed(2);
+            subtotal += total;
+        });
+
+        // Update the subtotal
+        document.getElementById('cart-subtotal').innerText = '$' + subtotal.toFixed(2);
+
+        // Calculate and update the grand total
+        var total = subtotal + shipping;
+        document.getElementById('cart-total').innerHTML = '<strong>$' + total.toFixed(2) + '</strong>';
+    }
+
+    // Initial call to set up totals on page load
+    document.addEventListener('DOMContentLoaded', updateCart);
+</script>
+
+
+{% endblock content %}

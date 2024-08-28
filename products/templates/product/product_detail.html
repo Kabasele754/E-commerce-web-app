@@ -1,0 +1,94 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+
+ <!-- <<<<<<<<<<<<<<<<<<<< Single Product Details Area Start >>>>>>>>>>>>>>>>>>>>>>>>> -->
+    <section class="single_product_details_area section_padding_0_100">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-12 col-md-6">
+                    <div class="single_product_thumb">
+                        <div id="product_details_slider" class="carousel slide" data-ride="carousel">
+                            <ol class="carousel-indicators">
+                                {% for image in product.images.all %}
+                                    <li data-target="#product_details_slider" data-slide-to="{{ forloop.counter0 }}" style="background-image: url('{{ image.image.url }}');"></li>
+                                {% endfor %}
+                            </ol>
+                            <div class="carousel-inner">
+                                {% for image in product.images.all %}
+
+                                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                        <a class="gallery_img" href="{{ image.image.url }}">
+                                            <img class="d-block w-100" src="{{ image.image.url }}" alt="Slide {{ forloop.counter }}">
+                                        </a>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="single_product_desc">
+                        <h4 class="title"><a href="#">{{ product.name }}</a></h4>
+                        <h4 class="price">${{ product.price }}</h4>
+                        <p class="available">Available: <span class="text-muted">{{ product.stock_status }}</span></p>
+                        <div class="single_product_ratings mb-15">
+                            {% for i in "12345" %}
+                                <i class="fa fa-star{% if i > product.rating %}-o{% endif %}" aria-hidden="true"></i>
+                            {% endfor %}
+                        </div>
+
+                        <div class="widget size mb-50">
+                            <h6 class="widget-title">Size</h6>
+                            <div class="widget-desc">
+                                <ul>
+                                    {% for size in product.sizes.all %}
+                                        <li><a href="#">{{ size }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Add to Cart Form -->
+                        <form class="cart clearfix mb-50 d-flex" method="post" action="{% url 'add_to_cart_ajax' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <div class="quantity">
+                                <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) && qty > 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
+                                <input type="number" class="qty-text" id="qty" step="1" min="1" max="{{ product.stock }}" name="quantity" value="1">
+                                <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                            </div>
+                            <button type="submit" name="addtocart" value="5" class="btn cart-submit d-block">Add to cart</button>
+                        </form>
+
+                        <div id="accordion" role="tablist">
+                            <!-- Information Section -->
+                            <div class="card">
+                                <div class="card-header" role="tab" id="headingOne">
+                                    <h6 class="mb-0">
+                                        <a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Information</a>
+                                    </h6>
+                                </div>
+                                <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+                                    <div class="card-body">
+                                        <p>{{ product.description }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Additional sections like Cart Details, Shipping & Returns, etc. -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- <<<<<<<<<<<<<<<<<<<< Single Product Details Area End >>>>>>>>>>>>>>>>>>>>>>>>> -->
+
+
+
+{% endblock content %}

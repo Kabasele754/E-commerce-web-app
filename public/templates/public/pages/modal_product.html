@@ -1,0 +1,68 @@
+{% load static %}
+<!-- Modal -->
+<div class="modal fade" id="{{ product.id }}" tabindex="-1" role="dialog" aria-labelledby="quickview" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <button type="button" class="close btn" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+            <div class="modal-body">
+                <div class="quickview_body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 col-lg-5">
+                                <div class="quickview_pro_img">
+
+                                  {% with product.get_first_image as first_image %}
+                        {% if first_image %}
+                            <img src="{{ first_image.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="{% static 'img/default-product.png' %}" alt="No Image Available">
+                        {% endif %}
+                    {% endwith %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-7">
+                                <div class="quickview_pro_des">
+                                    <h4 class="title">{{ product.name }}</h4>
+                                    <h5 class="price">${{ product.price }}</h5>
+                                    <p>{{ product.description }}</p>
+                                    <a href="{% url 'product_detail' product.id %}">View Full Product Details</a>
+                                </div>
+                                <!-- Add to Cart Form -->
+                                <form class="cart" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                                    <div class="quantity">
+                                        <span class="qty-minus"><i class="fa fa-minus" aria-hidden="true"></i></span>
+                                        <input type="number" class="qty-text" id="qty" step="1" min="1" max="{{ product.stock }}" name="quantity" value="1">
+                                        <span class="qty-plus"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                    </div>
+                                    <button type="submit" class="cart-submit">Add to cart</button>
+                                    <!-- Wishlist and Compare -->
+                                    <div class="modal_pro_wishlist">
+                                        <a href="wishlist.html" target="_blank"><i class="ti-heart"></i></a>
+                                    </div>
+                                    <div class="modal_pro_compare">
+                                        <a href="compare.html" target="_blank"><i class="ti-stats-up"></i></a>
+                                    </div>
+                                </form>
+
+                                <div class="share_wf mt-30">
+                                    <p>Share With Friend</p>
+                                    <div class="_icon">
+                                        <a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                                        <a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                                        <a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a>
+                                        <a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

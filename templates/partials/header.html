@@ -1,0 +1,93 @@
+{% load static %}
+<header class="header_area">
+    <!-- Zone de la barre supérieure début -->
+    <div class="top_header_area">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center justify-content-end">
+                <div class="col-12 col-lg-7">
+                    <div class="top_single_area d-flex align-items-center">
+                        <!-- Zone du logo -->
+                        <div class="top_logo">
+                             <div class="logo">E-VIP</div>
+<!--                            <a href="#"><img src="{% static 'img/core-img/logo.png' %}" alt="Logo"></a>-->
+                        </div>
+                        <!-- Zone du panier et du menu -->
+                        <div class="header-cart-menu d-flex align-items-center ml-auto">
+                            <!-- Zone du panier -->
+                            <div class="cart">
+                                <a href="#" id="header-cart-btn" target="_blank">
+                                    <span class="cart_quantity">{{ cart_count }}</span>
+                                    <i class="ti-bag"></i> Votre Panier ${{ total_price }}
+                                </a>
+                                <!-- Début de la liste du panier -->
+                                <ul class="cart-list">
+                                    {% for item in cart_items %}
+                                    <li>
+                                        <a href="#" class="image">
+                                            {% with item.product.get_first_image as first_image %}
+                                        {% if first_image %}
+                                            <img src="{{ first_image.image.url }}" class="cart-thumb" alt="{{ product.name }}">
+                                        {% else %}
+                                            <img src="{% static 'img/default-product.png' %}" alt="Image non disponible">
+                                        {% endif %}
+                                    {% endwith %}
+                                        </a>
+                                        <div class="cart-item-desc">
+                                            <h6><a href="#">{{ item.product.name }}</a></h6>
+                                            <p>{{ item.quantity }}x - <span class="price">${{ item.product.price }}</span></p>
+                                        </div>
+                                        <span class="dropdown-product-remove" data-product-id="{{ item.product.id }}"><i class="icon-cross"></i></span>
+                                    </li>
+                                    {% endfor %}
+                                    <li class="total">
+                                        <span class="pull-right">Total: ${{ total_price }}</span>
+                                        <a href="{% url 'cart' %}" class="btn btn-sm btn-cart">Panier</a>
+                                        <a href="{% url 'checkout' %}" class="btn btn-sm btn-checkout">Paiement</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="header-right-side-menu ml-15">
+                                <a href="#" id="sideMenuBtn"><i class="ti-menu" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Zone de la barre supérieure fin -->
+    <div class="main_header_area">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-12 d-md-flex justify-content-between">
+                    <!-- Zone des réseaux sociaux -->
+                    <div class="header-social-area">
+                        <a href="#"><span class="karl-level">Partager</span> <i class="fa fa-pinterest" aria-hidden="true"></i></a>
+                        <a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                        <a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                        <a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                    </div>
+                    <!-- Zone du menu -->
+                    <div class="main-menu-area">
+                        <nav class="navbar navbar-expand-lg align-items-start">
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#karl-navbar" aria-controls="karl-navbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"><i class="ti-menu"></i></span></button>
+                            <div class="collapse navbar-collapse align-items-start collapse" id="karl-navbar">
+                                <ul class="navbar-nav animated" id="nav">
+                                    <li class="nav-item active"><a class="nav-link" href="{% url 'home' %}">Accueil</a></li>
+
+                                    <li class="nav-item"><a class="nav-link" href="{% url 'shop' %}">Boutique</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#"><span class="karl-level">nouveau</span> Chaussures</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                    <!-- Ligne d'assistance -->
+                    <div class="help-line">
+                        <a href="tel:+346573556778"><i class="ti-headphone-alt"></i> +97 455 455 33</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
